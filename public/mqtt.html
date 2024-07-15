@@ -52,7 +52,39 @@
         document.getElementById('on_button').addEventListener('click', () => {
             const topic = 'button_husni';
             const message = 'on';
+    <main>
+        <h1>MQTT Publish Interface Java Script</h1>
+        <button id="on_button">On</button>
+        <button id="off_button">Off</button>
+        <h2>Latest Sensor Data</h2>
+        <div id="sensorData">No data received</div>
+        <meter id="disk_c" value="0" min="0" max="4096">2 out of 10</meter><br>
+    </main>
+  
+    <script>
+        document.getElementById('on_button').addEventListener('click', () => {
+            const topic = 'button_husni';
+            const message = 'on';
 
+            fetch('/publish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ topic, message })
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('off_button').addEventListener('click', () => {
+            const topic = 'button_husni';
+            const message = 'off';
             fetch('/publish', {
                 method: 'POST',
                 headers: {
@@ -104,7 +136,41 @@
 
         // Fetch sensor data every 1 second
         setInterval(fetchSensorData, 1000);
+            fetch('/publish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ topic, message })
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
 
+        function fetchSensorData() {
+            fetch('/sensor-data')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('sensorData').innerText = data.data;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        var meterElement = document.getElementById('disk_c');
+
+        // Fetch sensor data every 1 second
+        setInterval(fetchSensorData, 1000);
+
+        // Fetch sensor data initially
+        fetchSensorData();
+    </script>
         // Fetch sensor data initially
         fetchSensorData();
     </script>
