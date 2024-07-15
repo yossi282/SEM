@@ -5,7 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MQTT</title>
   <link rel="stylesheet" href="/css/style.css">
-  <script src="js/kalkulator.js" defer></script>
+  <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: top; 
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #DDE6ED;
+        }
+    main {
+        padding-top: 65px; /* Sesuaikan dengan tinggi header Anda */
+    }
+    #on_button, #off_button {
+        font-size: 20px; /* Ukuran teks */
+        padding: 15px 30px; /* Padding atas-bawah dan kiri-kanan */
+        width: 200px; /* Lebar tombol */
+        height: 50px; /* Tinggi tombol */
+        justify-content: center;
+    }
+  </style>
 </head>
 <body>
     <header>
@@ -19,98 +39,74 @@
             </ul>
         </nav>
     </header>
-  <style>
-        #on_button {
-            font-size: 20px; /* Ukuran teks */
-            padding: 15px 30px; /* Padding atas-bawah dan kiri-kanan */
-            width: 200px; /* Lebar tombol */
-            height: 50px; /* Tinggi tombol */
-        }
-		
-		#off_button {
-            font-size: 20px; /* Ukuran teks */
-            padding: 15px 30px; /* Padding atas-bawah dan kiri-kanan */
-            width: 200px; /* Lebar tombol */
-            height: 50px; /* Tinggi tombol */
-        }
-		
-		
-   </style>
+    <main>
+        <h1>MQTT Publish Interface Java Script</h1>
+        <button id="on_button">On</button>
+        <button id="off_button">Off</button>
+        <h2>Latest Sensor Data</h2>
+        <div id="sensorData">No data received</div>
+        <meter id="disk_c" value="0" min="0" max="4096">2 out of 10</meter><br>
+    </main>
   
-</head>
-<body>
-  <h1>MQTT Publish Interface Express JS</h1>
-  <button id="on_button">On</button>
-  <button id="off_button">Off</button>
-  <h2>Latest Sensor Data</h2>
-  <div id="sensorData">No data received</div>
-  
-  <meter id="disk_c" value=parseInt(sensorData) min="0" max="4096">2 out of 10</meter><br>
+    <script>
+        document.getElementById('on_button').addEventListener('click', () => {
+            const topic = 'button_husni';
+            const message = 'on';
 
-
-
-  <script>
-    document.getElementById('on_button').addEventListener('click', () => {
-      const topic = 'button_husni';
-      const message = 'on';
-
-      fetch('/publish', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ topic, message })
-      })
-      .then(response => response.text())
-      .then(data => {
-        alert(data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    });
-	
-	document.getElementById('off_button').addEventListener('click', () => {
-      const topic = 'button_husni';
-      const message = 'off';
-
-      fetch('/publish', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ topic, message })
-      })
-      .then(response => response.text())
-      .then(data => {
-        alert(data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    });
-	
-	function fetchSensorData() {
-      fetch('/sensor-data')
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('sensorData').innerText = data.data;
-        })
-        .catch(error => {
-          console.error('Error:', error);
+            fetch('/publish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ topic, message })
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         });
-    }
-		
-		
-	var meterElement = document.getElementById('disk_c');
-		
-    // Fetch sensor data every 1 seconds
-    setInterval(fetchSensorData, 1000);
 
-    // Fetch sensor data initially
-    fetchSensorData();
-	
-	
-  </script>
+        document.getElementById('off_button').addEventListener('click', () => {
+            const topic = 'button_husni';
+            const message = 'off';
+
+            fetch('/publish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ topic, message })
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        function fetchSensorData() {
+            fetch('/sensor-data')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('sensorData').innerText = data.data;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        var meterElement = document.getElementById('disk_c');
+
+        // Fetch sensor data every 1 second
+        setInterval(fetchSensorData, 1000);
+
+        // Fetch sensor data initially
+        fetchSensorData();
+    </script>
 </body>
 </html>

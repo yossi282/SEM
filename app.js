@@ -1,5 +1,5 @@
 const express = require("express");
-const mqtt = require('mqtt')
+const mqtt = require('mqtt');
 const app = express();
 const path = require('path');
 
@@ -11,7 +11,7 @@ let latestSensorData = 'data';
 
 // Connect to the MQTT broker
 //const mqttClient = mqtt.connect('mqtt://127.0.0.1:1883');
-const mqttClient = mqtt.connect('mqtt://broker.emqx.io:1883/mqtt');
+const mqttClient = mqtt.connect('mqtt://broker.emqx.io:1883');
 
 mqttClient.on('connect', () => {
   console.log('Connected to MQTT broker');
@@ -81,6 +81,6 @@ app.get("/mqtt", function (req, res) {
     res.sendFile(path.join(__dirname, "public/mqtt.html"));
 });
 
-app.listen("2700", function () {
+app.listen("2828", function () {
     console.log("Your website is online.");
 });
