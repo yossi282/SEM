@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(to bottom,
+                #1c3b58,  /* biru gelap */
+                #234e72,  /* biru sedang */
+                #2b628d,  /* biru agak terang */
+                #3b729e,  /* biru lebih terang */
+                #4d82af    /* biru pastel sangat terang */
+            ); 
+            color: white;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #1c3b58;
+            color: white;
+            padding: 15px 35px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1em;
+        }
+
+        header nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        header nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        header nav ul li {
+            margin: 0 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        header nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo {
+            height: 35px;
+            transition: transform 0.3s ease, shadow 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.1); /* Sedikit memperbesar saat hover */
+            border-radius: 50%; /* Membuat efek bulat */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Efek bayangan lebih dalam saat hover */
+        }
+
+        .upilogo {
+            display: block;
+            margin: 0 auto 30px; /* Center the logo and add space below it */
+            height: 80px; /* Adjusted the height of the logo */
+            transition: transform 0.3s ease, shadow 0.3s ease;
+        }
+
+        .upilogo:hover {
+            transform: scale(1.1); /* Sedikit memperbesar saat hover */
+            border-radius: 50%; /* Membuat efek bulat */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Efek bayangan lebih dalam saat hover */
+        }
+
+
+        .userlogo {
+            height: 35px;
+            transition: transform 0.3s ease, shadow 0.3s ease;
+        }
+
+        .userlogo:hover {
+            transform: scale(1.1); /* Sedikit memperbesar saat hover */
+            border-radius: 50%; /* Membuat efek bulat */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Efek bayangan lebih dalam saat hover */
+        }
+
+        .user-logo {
+    margin-left: auto; /* Memindahkan userlogo ke kanan */
+    order: 2; /* Menempatkan userlogo sebagai item terakhir */
+    padding-right: 20px;
+    margin-right: 20px;
+    position: relative; /* Membutuhkan posisi relatif untuk dropdown */
+}
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Jarak antara elemen */
+        }
+
+        
+        .dropdown {
+            display: none; /* Sembunyikan dropdown secara default */
+            position: absolute; /* Posisi absolut untuk dropdown */
+            top: 100%; /* Posisi dropdown di bawah userlogo */
+            right: 0px; /* Posisi dropdown di ujung kanan userlogo */
+            background-color: #234e72;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 150px;
+            z-index: 1000;
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 10px;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .dropdown a:hover {
+            background-color: #1c3b58;
+        }
+
+        .user-logo:hover .dropdown {
+            display: block; /* Tampilkan dropdown saat hover */
+        }
+
+        main {
+            display: flex;
+            flex-direction: column; /* Susun item secara vertikal */
+            align-items: center;
+            padding: 20px;
+        }
+
+        .welcome-box {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.2); /* Warna latar belakang semi-transparan */
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Bayangan untuk efek kedalaman */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 90%; /* Lebar maksimum box */
+            width: auto; /* Sesuaikan lebar dengan teks */
+            margin-bottom: 20px; /* Jarak antara box */
+            text-align: center;
+        }
+
+        .welcome-box:hover {
+            transform: scale(1.05); /* Sedikit memperbesar saat hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Efek bayangan lebih dalam saat hover */
+        }
+
+        .welcome-box h1 {
+            font-size: 3em; /* Membesarkan font size */
+            margin: 0;
+        }
+
+        .welcome-box h3 {
+            font-size: 1.2em;
+            margin: 0;
+            font-weight: normal; /* Untuk gaya yang lebih halus */
+        }
+
+        @media (max-width: 600px) {
+            .welcome-box {
+                width: 90%;
+                padding: 15px;
+            }
+
+            .welcome-box h1 {
+                font-size: 2em;
+            }
+
+            .welcome-box h3 {
+                font-size: 1em;
+            }
+        }
+    </style>
+            <script>
+                function confirmSignOut(event) {
+                    event.preventDefault(); // Mencegah tautan untuk diikuti secara langsung
+                    var confirmation = confirm("Apakah anda yakin ingin keluar?");
+                    if (confirmation) {
+                        window.location.href = "/"; // Arahkan ke halaman /
+                    }
+                }
+            </script>
+</head>
+<body>
+    <header> 
+        <nav>
+          <div class="nav-links">
+              <ul>
+                  <li><a href="/home"><img src="images/logoupi.png" alt="Logo" class="logo"></a></li>
+                  <li><a href="/about">About</a></li>
+                  <li><a href="/SEM">SEM</a></li>
+              </ul>
+            </div>
+            <div class="user-logo">
+                <img src="images/user.png" alt="User Logo" class="userlogo"></a>
+                <div class="dropdown">
+                    <a href="/profil">Profil</a>
+                    <a href="/" onclick="confirmSignOut(event)">Sign Out</a>
+                </div>
+            </div>
+        </nav>
+      </header>
+    <main>
+        <img src="images/logoupi.png" alt="Logo" class="upilogo">
+        <div class="welcome-box">
+            <h1>SELAMAT DATANG</h1>
+            <h3>Website ini digunakan untuk mengendalikan dan memantau sensor pada perangkat yang berada di atas kapal</h3>
+        </div>
+        </div>
+    </main>
+    <script src="js/main.js"></script>
+</body>
+</html>

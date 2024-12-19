@@ -3,7 +3,7 @@ import { Buffer } from 'buffer'
 import Ws, { ClientOptions } from 'ws'
 import _debug from 'debug'
 import { DuplexOptions, Transform } from 'readable-stream'
-import IS_BROWSER from '../is-browser'
+import isBrowser from '../is-browser'
 import MqttClient, { IClientOptions } from '../client'
 import { BufferedDuplex, writev } from '../BufferedDuplex'
 
@@ -44,7 +44,7 @@ function setDefaultOpts(opts: IClientOptions) {
 	if (!opts.wsOptions) {
 		options.wsOptions = {}
 	}
-	if (!IS_BROWSER && opts.protocol === 'wss') {
+	if (!isBrowser && !opts.forceNativeWebSocket && opts.protocol === 'wss') {
 		// Add cert/key/ca etc options
 		WSS_OPTIONS.forEach((prop) => {
 			if (
@@ -256,11 +256,15 @@ const browserStreamBuilder: StreamBuilder = (client, opts) => {
 	/**
 	 * https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/message_event
 	 */
-	function onMessage(event: MessageEvent) {
+	async function onMessage(event: MessageEvent) {
 		let { data } = event
 		if (data instanceof ArrayBuffer) data = Buffer.from(data)
+		else if (data instanceof Blob)
+			data = Buffer.from(await new Response(data).arrayBuffer())
 		else data = Buffer.from(data as string, 'utf8')
-		proxy.push(data)
+		if (proxy && !proxy.destroyed) {
+			proxy.push(data)
+		}
 	}
 
 	function socketWriteBrowser(
@@ -298,4 +302,4 @@ const browserStreamBuilder: StreamBuilder = (client, opts) => {
 	return stream
 }
 
-export default IS_BROWSER ? browserStreamBuilder : streamBuilder
+export { browserStreamBuilder, streamBuilder }

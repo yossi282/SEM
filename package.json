@@ -9,10 +9,24 @@
   "author": "yossifeb",
   "license": "ISC",
   "dependencies": {
+    "base64-js": "^1.5.1",
+    "bcrypt": "^5.1.1",
+    "chacha": "^2.1.0",
+    "chacha20": "^0.1.4",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.2.0",
+    "curve25519-js": "^0.0.4",
+    "curve25519-n": "^1.2.1",
+    "dotenv": "^16.4.5",
+    "elliptic": "^6.6.1",
     "express": "^4.19.2",
-    "mqtt": "^5.8.0",
+    "libsodium-wrappers": "^0.7.15",
+    "mqtt": "^5.10.3",
     "mqtt-ws": "^0.2.0",
     "request": "^2.88.2",
-    "ws": "^8.18.0"
+    "sjcl": "^1.0.8",
+    "tweetnacl": "^1.0.3",
+    "ws": "^8.18.0",
+    "xchacha20-js": "^0.3.1"
   }
 }

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Energy Meter</title>
+  <script src="https://cdn.jsdelivr.net/npm/mqtt/dist/mqtt.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(to bottom, #1c3b58, #234e72, #2b628d, #3b729e, #4d82af);
+      color: white;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #1c3b58;
+  color: white;
+  padding: 15px 35px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.2em;
+}
+
+
+    header nav ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+header nav ul li {
+  margin: 0 15px;
+  display: flex;
+  align-items: center;
+}
+
+header nav ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+.logo {
+        height: 35px;
+        transition: transform 0.3s ease, shadow 0.3s ease;
+    }
+
+    .logo:hover {
+        transform: scale(1.1); /* Sedikit memperbesar saat hover */
+        border-radius: 50%; /* Membuat efek bulat */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Efek bayangan lebih dalam saat hover */
+    }
+
+    main {
+      margin-top: 80px;
+      width: 90%;
+      display: grid;
+      grid-template-rows: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 1200px;
+    }
+
+    /* Grid Section Styles */
+    .section {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .card {
+      position: relative; /* Set position relative for absolute positioning of h2 */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 40px 20px 20px; /* Add padding to the top for the title */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      height: 190px;
+    }
+
+    .gauge {
+      position: relative;
+      width: 100px;
+      height: 100px; /* Set height to half for half-circle */
+    }
+
+    .gauge canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100px; /* Set canvas width */
+      height: 100px; /* Set canvas height */
+    }
+
+    .gauge-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.5em;
+      color: white;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      position: absolute; /* Position absolute to place it above the card */
+      top: 10px; /* Adjust the position */
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
+      font-size: 1.3em;
+      color: white; /* Set color to white for visibility */
+    }
+
+    .card h3 {
+      margin: 10px 0 0;
+      font-size: 2em;
+    }
+
+    @media (max-width: 600px) {
+      .section {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#"><img src="images/logoupi.png" alt="Logo" style="height: 35px;"></a></li>
+        <li><a href="#">SMART ENERGY METER</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="section">
+      <div class="card">
+        <h2>VOLTAGE</h2>
+        <div class="gauge">
+          <canvas id="voltage-gauge" width="100" height="100"></canvas>
+          <div class="gauge-value" id="voltage-display">0 V</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>CURRENT</h2>
+        <canvas id="current-chart" width="100" height="100"></canvas>
+        <div class="gauge-value" id="current-display">0 A</div>
+      </div>
+    <div class="card">
+      <h2>FREQUENCY</h2>
+      <div class="gauge">
+        <canvas id="frequency-gauge" width="100" height="100"></canvas>
+        <div class="gauge-value" id="frequency-display">0 Hz</div>
+      </div>
+    </div>
+  </div>
+
+    <div class="section">
+      <div class="card">
+        <h2>POWER</h2>
+        <h3 id="power-display">0 W</h3>
+      </div>
+      <div class="card">
+        <h2>ENERGY</h2>
+        <h3 id="energy-display">0 kWh</h3>
+      </div>
+      <div class="card">
+        <h2>POWER FACTOR</h2>
+        <div class="gauge">
+          <canvas id="pf-gauge" width="100" height="100"></canvas>
+          <div class="gauge-value" id="pf-display">0.00</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function drawGauge(canvasId, value, maxValue) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      const radius = canvas.width / 2;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.arc(radius, radius, radius - 10, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ddd';
+      ctx.lineWidth = 10;
+      ctx.stroke();
+
+      const angle = (value / maxValue) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(radius, radius, radius - 10, -Math.PI / 2, angle - Math.PI / 2);
+      ctx.strokeStyle = '#4caf50';
+      ctx.lineWidth = 10;
+      ctx.stroke();
+    }
+
+    function fetchSensorData() {
+      fetch('/sensor-data')
+        .then(response => response.json())
+        .then(data => {
+          // Update each sensor data display
+          document.getElementById('voltage-display').innerText = data.voltage + ' V';
+          document.getElementById('current-display').innerText = data.current + ' A';
+          document.getElementById('frequency-display').innerText = data.frequency + ' Hz';
+          document.getElementById('power-display').innerText = data.power + ' W';
+          document.getElementById('energy-display').innerText = data.energy + ' kWh';
+          document.getElementById('pf-display').innerText = data.powerfactor;
+        
+          // Draw gauges
+          drawGauge('voltage-gauge', data.voltage, 240); // Assuming max voltage is 240V
+          drawGauge('frequency-gauge', data.frequency, 60); // Assuming max frequency is 60Hz
+          drawGauge('pf-gauge', data.powerfactor, 1); // Power factor ranges from 0 to 1
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
+
+    // Fetch data every 1 second
+    setInterval(fetchSensorData, 1000);
+    fetchSensorData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="https:maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="shortcut icon" href="./favicon.ico">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+  <title>Smart Energy Meter</title>
+  <link href="./static/css/main.72e3962d.css" rel="stylesheet">
+  </head>
+
+<body>
+  <div style="text-align:center; width:100%">
+    <h1>Energy Dashboard</h1>
+  </div>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root">
+    <div data-reactroot>
+      <div class="container-fluid">
+        <div class="row flex-xl-nowrap">
+          <div id="nav" class="col-12 col-md-3 col-xl-2 bd-sidebar">
+            <div class="row">
+              <div class="col-md-12 col-8">
+                <div class="text-sm-left text-md-center logo">
+                  <!--react-text: 8-->
+                  "Smart Energy Meter"
+                  <!--/react-text-->
+                  <span id="beta"> BETA</span>
+                </div>
+              </div>
+              <div class="col-md-12 col-4 text-right">
+                <button class="btn btn-link bd-search-docs-toggle d-md-none p-0 ml-3 collapsed" type="button" data-toggle="collapse" data-target="#bd-docs-nav" aria-controls="bd-docs-nav" aria-expanded="false" aria-label="Toggle docs navigation">
+                  <svg xmlns=""http://ww.w3.org/2000/svg" viewBox="0 0 30 30" width="30"  height="30" focusable="false">
+                    <tittle>Menu</tittle>
+                    <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <nav class="bd-links collapse" id="bd-docs-nav" style>
+              <ul class="left-option active" id="Dashboard">
+                <li class="left-option active" id="Dashboard">
+                  <!--react-text: 18-->
+                  <!--/react-text-->
+                    <a href="#">
+                    <!--react-text:20-->
+                    "Dashboard"
+                    <!--/react-text-->
+                    <!--react-text:21-->
+                    <!--/react-text-->
+                  </a>
+                </li>
+                <li class="left-option" id="Cost">
+                    <!--react-text: 23-->
+                    <!--/react-text-->
+                  <a href="#">
+                      <!--react-text:21-->
+                      "Cost"
+                      <!--react-text-->
+                      <!--react-text: 26-->
+                      <!--/react-text-->
+                  </a>
+                </li>
+                <li class="left-option" id="Appliances">
+                  <!--react-text: 28-->
+                  <!--/react-text-->
+                <a href="#">
+                    <!--react-text:30-->
+                    "Appliances"
+                    <!--react-text-->
+                    <!--react-text: 31-->
+                    <!--/react-text-->
+                </a>
+              </li>
+              <li class="left-option" id="Usage-by-rooms">
+                <!--react-text: 33-->
+                <!--/react-text-->
+                <a href="#">
+                  <!--react-text:35-->
+                  "Usage-by-rooms"
+                  <!--react-text-->
+                  <!--react-text: 36-->
+                  <!--/react-text-->
+                </a>
+              </li>
+              <li class="left-option" id="Emissions">
+                <!--react-text: 38-->
+                <!--/react-text-->
+                <a href="#">
+                  <!--react-text:40-->
+                  "Emissions"
+                  <!--react-text-->
+                  <!--react-text: 41-->
+                  <!--/react-text-->
+                </a>
+              </li>
+              </ul>
+            </nav>
+          </div>
+          <div id="content-body" class="col-12 col-md-9 col-x1-10 pl-4 pr-4 bd-content">
+            <div class="row">
+              <div class="col-md-12 pt-4 mt-3">
+                <h2>Energy Dashboard</h2>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-7">
+                <ul class="buttonwrapper">
+                  <li id="today">
+                    <label id="11">TODAY</label>
+                  </li>
+                  <li id="month" class="active">
+                    <label id="12">MONTH</label>
+                  </li>
+                  <li id="year">
+                    <label id="13">YEAR</label>
+                  </li>
+                </ul>
+              </div>
+              <div class="row mt-3 db-chart"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+
+
+
+
+
+

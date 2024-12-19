@@ -1,0 +1,159 @@
+// ini app.js yang udah bisa enkripsi dan dekripsi
+// titip disini dulu
+// yg app.js nya mau dicoba otak atik buat ecdh nya
+
+const express = require("express");
+const mqtt = require('mqtt');
+const app = express();
+const path = require ('path');
+const crypto = require('crypto');
+
+app.use(express.static("public"));
+app.use(express.json());
+
+// Variable to store the latest sensor data
+let latestTemperature = '0';
+let latestHumidity = '0';
+let latestRelayStatus = 'OFF';
+
+// Kunci dan nonce yang sama dengan kode ESP8266
+const key = Buffer.from([
+  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+  0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+  0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
+]);
+const nonce = Buffer.from([
+  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+  0x08, 0x09, 0x0A, 0x0B
+]);  // 12-byte nonce
+
+// Fungsi untuk mendekripsi data
+function decryptData(encryptedBase64) {
+  // Base64 decode the encrypted data
+  const encryptedData = Buffer.from(encryptedBase64, "base64");
+
+  // Split the data to extract the ciphertext and the authentication tag
+  const ciphertext = encryptedData.slice(0, encryptedData.length - 16);  // Everything except last 16 bytes
+  const tag = encryptedData.slice(encryptedData.length - 16);  // Last 16 bytes are the tag
+
+  // Pastikan panjang tag autentikasi adalah 16 byte
+    if (tag.length !== 16) {
+      console.error("Tag autentikasi yang diterima tidak valid (panjang tag: " + tag.length + " byte).");
+      return null;
+    }
+
+        // Membuat dekripsi dengan ChaCha20-Poly1305
+        const decipher = crypto.createDecipheriv("chacha20-poly1305", key, nonce);
+        decipher.setAuthTag(tag);
+
+ try {
+    // Decrypt the data
+    let decrypted = decipher.update(ciphertext);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+
+    // Convert the decrypted data to a string
+    return decrypted.toString("utf-8");
+  } catch (err) {
+    console.error("Decryption failed", err);
+    return null;
+  }
+}
+
+// Connect to the MQTT broker
+const mqttClient = mqtt.connect("mqtt://yossifebriyana.cloud.shiftr.io", {
+  username: "yossifebriyana",
+  password:"tokenrahasiayossi",
+connectTimeout: 5000, // Timeout koneksi (5 detik)
+});
+
+mqttClient.on(`connect`, () => {
+  console.log(`Connected to MQTT broker`);
+  
+  mqttClient.subscribe('dht11/temperature_yossi', (err) => {
+    if (err) {
+      console.error('Failed to subscribe to topic "dht11/temperature_yossi":', err);
+    } else {
+      console.log('Subscribed to topic "dht11/temperature_yossi"');
+    }
+  });
+
+  mqttClient.subscribe('dht11/humidity_yossi', (err) => {
+    if (err) {
+      console.error('Failed to subscribe to topic "dht11/humidity_yossi":', err);
+    } else {
+      console.log('Subscribed to topic "dht11/humidity_yossi"');
+    }
+  });
+
+  mqttClient.subscribe('relay_yossi/status', (err) => {
+    if (err) {
+      console.error('Failed to subscribe to topic "relay_yossi/status":', err);
+    } else {
+      console.log('Subscribed to topic "relay_yossi/status"');
+    }
+  });
+});
+
+mqttClient.on("message", (topic, message) => {
+  if (topic === "dht11/temperature_yossi") {
+    const encryptedTempBase64 = message.toString();
+    const decryptedTemp = decryptData(encryptedTempBase64);
+    console.log("Decrypted Temperature:", decryptedTemp);
+    latestTemperature = decryptedTemp; // Update the temperature data
+  } else if (topic === "dht11/humidity_yossi") {
+    const encryptedHumidityBase64 = message.toString();
+    const decryptedHumidity = decryptData(encryptedHumidityBase64);
+    console.log("Decrypted Humidity:", decryptedHumidity);
+    latestHumidity = decryptedHumidity; // Update the humidity data
+  } else if (topic === "relay_yossi/status") {
+    latestRelayStatus = message.toString(); // Update the relay status
+    console.log("Relay Status:", latestRelayStatus);
+  }
+});
+
+mqttClient.on("error", (err) => {
+  console.error("MQTT connection error:", err);
+});
+
+app.post("/publish", (req, res) => {
+  const { topic, message } = req.body;
+  console.log(`Received request to publish topic: ${topic}, message: ${message}`);
+
+  mqttClient.publish(topic, message, (err) => {
+    if (err) {
+      console.error("Error publishing message:", err);
+      res.status(500).send("Error publishing message");
+    } else {
+      console.log("Message published successfully");
+      res.send("Message published successfully");
+    }
+  });
+});
+
+// Route to get the latest sensor data
+app.get("/sensor-data", (req, res) => {
+  res.json({
+    temperature: latestTemperature,
+    humidity: latestHumidity,
+    relayStatus: latestRelayStatus,
+  });
+});
+
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
+
+app.get("/home", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/home.html"));
+});
+
+app.get("/SEM", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/SEM.html"));
+});
+
+const PORT = process.env.PORT || 2828;
+app.listen(PORT, () => {
+  console.log(`Your website is online on port ${PORT}.`);
+});
